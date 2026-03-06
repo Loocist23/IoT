@@ -1,0 +1,6 @@
+.pio
+.idea
+.vscode
+
+# Ignore MacOS system files
+.DS_Store

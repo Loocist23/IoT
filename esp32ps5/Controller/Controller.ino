@@ -3,7 +3,7 @@
 // UART2 pins on ESP32 DevKit V1 (D16/D17)
 static const int UART2_RX_PIN = 16;
 static const int UART2_TX_PIN = 17;
-static const uint32_t UART_BAUD = 230400;
+static const uint32_t UART_BAUD = 115200;
 
 // 5-bit protocol constants (bit4 = mode, bits0..3 = direction)
 static const uint8_t DIR_IDLE = 0b0000;
@@ -39,7 +39,11 @@ void onConnectedController(ControllerPtr ctl) {
 
 void onDisconnectedController(ControllerPtr ctl) {
     Serial.println("Controller disconnected");
+
     myController = nullptr;
+    trianglePrev = false;
+
+    Serial2.write(buildFrame5bit(robotMode, DIR_IDLE));
 }
 
 uint8_t computeDirectionNibble(int x, int y) {
@@ -130,8 +134,7 @@ void loop() {
     // Update Bluepad32
     BP32.update();
 
-    // Traiter la manette si elle est connectée
-    if (myController && myController->isConnected() && myController->hasData()) {
+    if (myController && myController->isConnected()) {
         processController(myController);
     }
 

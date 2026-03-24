@@ -3,7 +3,7 @@
 // UART2 pins on ESP32 DevKit V1 (D16/D17)
 static const int UART2_RX_PIN = 16;
 static const int UART2_TX_PIN = 17;
-static const uint32_t UART_BAUD = 115200;
+static const uint32_t UART_BAUD = 230400;
 
 // 5-bit protocol constants (bit4 = mode, bits0..3 = direction)
 static const uint8_t DIR_IDLE = 0b0000;
@@ -13,12 +13,15 @@ static const uint8_t DIR_LEFT = 0b0100;
 static const uint8_t DIR_RIGHT = 0b0110;
 
 static const int AXIS_DEADZONE = 50;
+static const unsigned long DEBUG_PRINT_INTERVAL_MS = 200;
 
 // Variables globales
 ControllerPtr myController = nullptr;
 bool trianglePrev = false;
 unsigned long lastTriangleToggleMs = 0;
 uint8_t robotMode = 0;
+uint8_t lastSentFrame = 0xFF;
+unsigned long lastDebugPrintMs = 0;
 
 // Couleurs pour les modes
 const uint8_t modeColors[2][3] = {
@@ -67,14 +70,18 @@ void sendControlFrame(ControllerPtr ctl) {
     // Raw binary frame over UART2 (0..31)
     Serial2.write(frame);
 
-    // Keep USB serial logs for monitoring.
-    Serial.printf(
-        "Joystick - X:%4d  Y:%4d  Mode:%d  Frame:0x%02X\n",
-        ctl->axisX(),
-        ctl->axisY(),
-        robotMode,
-        frame
-    );
+    const unsigned long now = millis();
+    if (frame != lastSentFrame || (now - lastDebugPrintMs) >= DEBUG_PRINT_INTERVAL_MS) {
+        Serial.printf(
+            "Joystick - X:%4d  Y:%4d  Mode:%d  Frame:0x%02X\n",
+            ctl->axisX(),
+            ctl->axisY(),
+            robotMode,
+            frame
+        );
+        lastDebugPrintMs = now;
+        lastSentFrame = frame;
+    }
 }
 
 // Traitement principal de la manette

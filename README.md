@@ -9,9 +9,8 @@ IoT/
 ├── esp32ps5/
 │   └── Controller/
 │       └── Controller.ino   # Firmware ESP32 (Bluepad32 + lecture manette)
-├── pyboard/
-│   └── main.py              # Script MicroPython de controle moteur (prototype)
-└── raspberry/               # A venir: code Raspberry Pi qui recevra/traitera la data ESP32
+├── raspberry/
+    └── main.py              # Script MicroPython de controle moteur (prototype)
 ```
 
 Note: le dossier `raspberry/` n'est pas encore present dans ce depot. Il sera ajoute a la racine pour la partie reception et traitement des donnees envoyees par l'ESP32.

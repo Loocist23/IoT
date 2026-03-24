@@ -2,5 +2,8 @@
 .idea
 .vscode
 
+# Ignore build artifacts and temporary files
+/esp32ps5/Controller/.skip.esp32s2
+
 # Ignore MacOS system files
 .DS_Store

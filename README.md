@@ -84,6 +84,33 @@ Joystick - X:  12  Y: -45  Mode:1
 2. La LED de la manette clignote rapidement
 3. L'ESP32 la detecte automatiquement via Bluepad32
 
+## Cablage UART (ESP32 -> carte receptrice)
+
+Utiliser UART2 de l'ESP32 DevKit V1:
+- `D17 (TX2)` ESP32 -> `RX` carte receptrice
+- `D16 (RX2)` ESP32 <- `TX` carte receptrice
+- `GND` ESP32 <-> `GND` carte receptrice (**masse commune obligatoire**)
+
+Le firmware emet la trame de commande sur `Serial2` a `115200` bauds.
+
+### Protocole de communication (5 bits)
+
+- `Bit 4`: Mode (`0` = normal, `1` = alternatif)
+- `Bits 0-3`: Direction
+
+| Bit4 | Bit3 | Bit2 | Bit1 | Bit0 | Signification |
+|---|---|---|---|---|---|
+| 0 | 0 | 0 | 0 | 0 | Idle (moteur arrete) |
+| 0 | 0 | 0 | 0 | 1 | Avant |
+| 0 | 0 | 0 | 1 | 0 | Arriere |
+| 0 | 0 | 1 | 0 | 0 | Gauche |
+| 0 | 0 | 1 | 1 | 0 | Droite |
+| 1 | x | x | x | x | Mode alternatif (ex: vitesse reduite) |
+
+Exemples:
+- `00001` = Avant en mode normal
+- `10001` = Avant en mode alternatif
+
 ## Anciennes commandes PlatformIO
 
 Les commandes suivantes ne sont plus applicables dans ce projet:
